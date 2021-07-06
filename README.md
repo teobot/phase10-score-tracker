@@ -1,20 +1,19 @@
-# Phase 10 Score Tracker
+# Phasetty
+> A phase10 score tracker application.
 
 ## Table of Contents
-- [Phase 10 Score Tracker](#phase-10-score-tracker)
+- [Phasetty](#phasetty)
   - [Table of Contents](#table-of-contents)
   - [Introduction](#introduction)
     - [What is this?](#what-is-this)
-  - [Known Issues](#known-issues)
+    - [Where is it deployed](#where-is-it-deployed)
   - [Development Resources](#development-resources)
 
 ## Introduction
 ### What is this?
 This is a score tracker for the game phase10.
-
-## Known Issues
-- [ ] Player can start the game without any players
-  - The minimum is 2
+### Where is it deployed
+You can find the host of the main build [here](phasetty.netlify.app).
 
 ## Development Resources
 - https://reactrouter.com/web/guides/quick-start

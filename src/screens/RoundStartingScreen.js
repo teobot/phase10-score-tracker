@@ -1,16 +1,16 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 
 import { GlobalGameContext } from "../global/globalGameData";
 
 import Countdown from "react-countdown";
 
+import { SCREEN_WAIT_TIME } from "../global/gameInfo";
+
 export default function RoundStartingScreen() {
-  const { roundNumber } = useContext(GlobalGameContext);
+  const { roundNumber, shouldGameEnd } = useContext(GlobalGameContext);
 
   let history = useHistory();
-
-  const SCREEN_WAIT_TIME = 2; // 3 === 3s
 
   return (
     <div
@@ -38,15 +38,17 @@ export default function RoundStartingScreen() {
           starting in{" "}
           <Countdown
             onComplete={() => {
-              history.push("/round");
+              if (shouldGameEnd()) {
+                // Game should end as someone has won
+                history.push("/end");
+              } else {
+                // Round should start as normal
+                history.push("/round");
+              }
             }}
             date={Date.now() + SCREEN_WAIT_TIME * 1000}
             renderer={({ seconds }) => {
-              return (
-                <span>
-                  {seconds}s
-                </span>
-              );
+              return <span>{seconds}s</span>;
             }}
           />
         </div>

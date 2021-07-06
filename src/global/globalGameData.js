@@ -1,18 +1,14 @@
 /* eslint-disable import/no-anonymous-default-export */
-import { createContext, useEffect, useReducer, useState } from "react";
+import { createContext, useReducer, useState } from "react";
 
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import {
+  ROUND_STARTING,
+  MAX_NAME_LENGTH,
+  PLAYER_COLORS,
+  STARTING_POINTS,
+} from "./gameInfo";
 
 export const GlobalGameContext = createContext();
-
-// Global Settings
-const MAX_NAME_LENGTH = 12;
-const MIN_PLAYERS = 2;
-const MAX_PLAYERS = 12;
-const PLAYER_COLORS = ["#EA2329", "#0970CB", "#F0C526", "#2A9941"];
-const ROUND_STARTING = 1;
-const STARTING_POINTS = 0;
 
 const gameDataReducer = (state, action) => {
   let newArray = [...state];
@@ -38,6 +34,33 @@ const gameDataReducer = (state, action) => {
         MAX_NAME_LENGTH
       );
       return newArray;
+    case "increaseRounds":
+      const playersForRoundIncrease = action.payload.arrayOfPlayers;
+      // Foreach of theses players increase there round
+      for (let i = 0; i < playersForRoundIncrease.length; i++) {
+        const playerId = playersForRoundIncrease[i];
+        let playerIndex = newArray
+          .map(function (item) {
+            return item.id;
+          })
+          .indexOf(playerId);
+        newArray[playerIndex].round = newArray[playerIndex].round + 1;
+      }
+      return newArray;
+    case "increasePoints":
+      const playersForPointsIncrease = action.payload.arrayOfPoints;
+      // Foreach of theses players increase there round
+      for (let i = 0; i < playersForPointsIncrease.length; i++) {
+        const player = playersForPointsIncrease[i];
+        let playerIndex = newArray
+          .map(function (item) {
+            return item.id;
+          })
+          .indexOf(player.id);
+        newArray[playerIndex].points =
+          newArray[playerIndex].points + player.points;
+      }
+      return newArray;
     default:
       return state;
   }
@@ -49,6 +72,8 @@ export default () => {
   const [player_key, setPlayer_key] = useState(1);
   const [colorKey, setColorKey] = useState(0);
   const [roundNumber, setRound] = useState(ROUND_STARTING);
+  const [lastRoundWinner, setLastRoundWinner] = useState(null);
+  const [winnersArray, setWinnersArray] = useState([]);
 
   const createPlayer = () => {
     // This method creates a player with a given name
@@ -65,9 +90,64 @@ export default () => {
     gameDataDispatch({ type: "change_player_name", payload: { id, name } });
   };
 
-  const confirmRoundWinner = (playerId) => {
-    // This function confirms the winner of the round
-  }
+  const confirmRoundWinner = async (id) => {
+    if (id !== null) {
+      // Set the round winner
+      setLastRoundWinner(id);
+
+      // Add the winner to the winners array for statistics
+      setWinnersArray([...winnersArray, ...[id]]);
+
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  const confirmPlayersPutdown = async (arrayOfPlayers) => {
+    // This method increases the round for each player that putdown
+    // Increase the rounds for each of the players
+    gameDataDispatch({ type: "increaseRounds", payload: { arrayOfPlayers } });
+    return true;
+  };
+
+  const confirmPlayerPoints = async (arrayOfPoints) => {
+    // this method increase the players points
+
+    // Increase player scores
+    gameDataDispatch({ type: "increasePoints", payload: { arrayOfPoints } });
+
+    // Update the next round
+    setRound(roundNumber + 1);
+
+    // remove last player winner
+    setLastRoundWinner(null);
+
+    return true;
+  };
+
+  const shouldGameEnd = () => {
+    // : function needs to return true or false depending on if the round should start
+
+    // Check if a player is on round 11
+    let winner = false
+    for (let i = 0; i < gameData.length; i++) {
+      const player = gameData[i];
+      if(player.round === 11) {
+        console.log(player);
+        winner = true
+      }
+    }
+
+    // Check if the round should end
+    if(winner) {
+      // Game needs to end as there is a winner
+      return true;
+    } else {
+      // Game can continue
+      return false 
+    }
+  };
 
   const playerRequiredJSON = () => {
     setPlayer_key(player_key + 1);
@@ -87,13 +167,6 @@ export default () => {
     };
   };
 
-  const returnRoundData = (points, round) => {
-    return {
-      points,
-      round,
-    };
-  };
-
   return [
     {
       gameData,
@@ -101,7 +174,11 @@ export default () => {
       removePlayer,
       changePlayerName,
       roundNumber,
-      confirmRoundWinner
+      confirmRoundWinner,
+      lastRoundWinner,
+      confirmPlayersPutdown,
+      confirmPlayerPoints,
+      shouldGameEnd,
     },
   ];
 };

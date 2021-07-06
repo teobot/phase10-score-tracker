@@ -1,32 +1,45 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import { WindowContext } from "../context/useWindowSize";
 import { GlobalGameContext } from "../global/globalGameData";
 
-import DeclareWinnerSegment from "../components/declareWinnerScreen/DeclareWinnerSegment";
+import PlayerPointsSegment from "../components/playerScoringScreen/PlayerPointsSegment";
 import BottomContainer from "../components/BottomContainer";
 
 import { Button, Icon } from "semantic-ui-react";
 import { useHistory } from "react-router-dom";
 
-export default function DeclareWinnerScreen() {
+export default function PlayerScoringScreen() {
   const { windowHeight, windowWidth } = useContext(WindowContext);
-  const { gameData, confirmRoundWinner } = useContext(GlobalGameContext);
-  const [winnerSelected, setWinnerSelected] = useState(null);
+  const { gameData, lastRoundWinner, confirmPlayerPoints } = useContext(GlobalGameContext);
 
-  let history = useHistory();
+  let history = useHistory()
 
-  const changeWinnerSelected = (playerId) => {
-    // This function changes the confirmed winner of the game
-    setWinnerSelected(playerId);
+  const [playerPoints, setPlayerPoints] = useState(
+    gameData.map((a) => {
+      return { id: a.id, points: 0 };
+    })
+  );
+
+  const setPlayerScore = (id, points) => {
+    let newArray = [...playerPoints];
+    newArray[
+      playerPoints
+        .map(function (item) {
+          return item.id;
+        })
+        .indexOf(id)
+    ].points = parseInt(points);
+    setPlayerPoints(newArray);
   };
 
-  const confirmWinner = async () => {
-    const confirmed = await confirmRoundWinner(winnerSelected);
-    if (confirmed) {
-      history.push("/placement");
+  const confirmPlayerPointsClick = async () => {
+    const res = await confirmPlayerPoints(playerPoints)
+    if(res) {
+      // go to next page
+      history.push("/next")
     }
-  };
+  }
 
   return (
     <div
@@ -44,12 +57,12 @@ export default function DeclareWinnerScreen() {
           style={{
             color: "white",
             textAlign: "center",
-            fontSize: 50,
+            fontSize: 42,
             padding: "50px 0px 25px 0px",
             fontWeight: 700,
           }}
         >
-          Who won?
+          Add Player Points
         </div>
         <div style={{ display: "flex", justifyContent: "center" }}>
           <div
@@ -61,39 +74,35 @@ export default function DeclareWinnerScreen() {
               color: "white",
             }}
           >
-            declare a winner by clicking the star by the winners name
+            Click on the inputs and enter each players points for the round
           </div>
         </div>
       </div>
       <div
         style={{
           width: "100%",
-          margin: "25px 0px 100px",
+          margin: "25px 0px",
           padding: "20px 25px",
-          maxHeight: `calc(100% - 150px)`,
+          maxHeight: `calc(100% - 250px)`,
           overflowY: "auto",
         }}
       >
         {gameData.map((player) => {
+          if (player.id === lastRoundWinner) {
+            return null;
+          }
           return (
-            <DeclareWinnerSegment
-              changeWinnerSelected={changeWinnerSelected}
-              winner={winnerSelected}
+            <PlayerPointsSegment
+              playerPoints={playerPoints}
               player={player}
+              setPlayerScore={setPlayerScore}
             />
           );
         })}
       </div>
       <BottomContainer size="small" alignCenter={true}>
-        <Button
-          fluid
-          positive
-          icon
-          size="big"
-          labelPosition="left"
-          onClick={confirmWinner}
-        >
-          Confirm Winner
+        <Button fluid positive icon size="big" labelPosition="left" onClick={confirmPlayerPointsClick}>
+          Confirm Points
           <Icon name="check" />
         </Button>
       </BottomContainer>

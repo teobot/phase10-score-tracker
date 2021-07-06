@@ -17,6 +17,9 @@ import PlayerCreationScreen from "./screens/PlayerCreationScreen";
 import RoundStartingScreen from "./screens/RoundStartingScreen";
 import RoundScreen from "./screens/RoundScreen";
 import DeclareWinnerScreen from "./screens/DeclareWinnerScreen";
+import PlayerScoringScreen from "./screens/PlayerScoringScreen";
+import DeclarePlayerPlacementScreen from "./screens/DeclarePlayerPlacementScreen";
+import EndWinnerScreen from "./screens/EndWinnerScreen";
 
 const Main = () => {
   const [WindowContextValues] = useWindowContext();
@@ -27,6 +30,15 @@ const Main = () => {
       <WindowContext.Provider value={WindowContextValues}>
         <Router>
           <Switch>
+            <Route path="/end">
+              <EndWinnerScreen/>
+            </Route>
+            <Route path="/scoring">
+              <PlayerScoringScreen />
+            </Route>
+            <Route path="/placement">
+              <DeclarePlayerPlacementScreen />
+            </Route>
             <Route path="/winner">
               <DeclareWinnerScreen />
             </Route>

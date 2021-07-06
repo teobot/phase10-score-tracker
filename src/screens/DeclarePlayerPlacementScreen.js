@@ -1,30 +1,51 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import { WindowContext } from "../context/useWindowSize";
 import { GlobalGameContext } from "../global/globalGameData";
 
-import DeclareWinnerSegment from "../components/declareWinnerScreen/DeclareWinnerSegment";
+import DeclarePlayerPutdown from "../components/declarePlayerScreen/DeclarePlayerPutdown";
 import BottomContainer from "../components/BottomContainer";
 
 import { Button, Icon } from "semantic-ui-react";
 import { useHistory } from "react-router-dom";
 
-export default function DeclareWinnerScreen() {
+export default function DeclarePlayerPlacementScreen() {
   const { windowHeight, windowWidth } = useContext(WindowContext);
-  const { gameData, confirmRoundWinner } = useContext(GlobalGameContext);
-  const [winnerSelected, setWinnerSelected] = useState(null);
+  const { gameData, lastRoundWinner, confirmPlayersPutdown } =
+    useContext(GlobalGameContext);
 
-  let history = useHistory();
+  // This contains and and all players that have put down in the round
+  const [selectedPlayers, setSelectedPlayers] = useState([lastRoundWinner]);
 
-  const changeWinnerSelected = (playerId) => {
-    // This function changes the confirmed winner of the game
-    setWinnerSelected(playerId);
+  let history = useHistory()
+
+  const TOP_TEXT = "Who put down?";
+  const BOTTOM_TEXT =
+    "Tick the name of each player that placed cards on the table";
+  const BUTTON_TEXT = "Confirm";
+
+  const addPlayerSelected = (id) => {
+    // This function adds a id to the selected player id array
+    setSelectedPlayers([...selectedPlayers, ...[id]]);
   };
 
-  const confirmWinner = async () => {
-    const confirmed = await confirmRoundWinner(winnerSelected);
-    if (confirmed) {
-      history.push("/placement");
+  const removePlayerSelected = (id) => {
+    // This function removes a player id from the selection array
+    if (selectedPlayers.includes(id)) {
+      let array = [...selectedPlayers];
+      const index = array.indexOf(id);
+      if (index > -1) {
+        array.splice(index, 1);
+      }
+      setSelectedPlayers(array);
+    }
+  };
+
+  const confirmPlayerSelected = async () => {
+    // This is the button method that saves which uses have been selected
+    const response = await confirmPlayersPutdown(selectedPlayers);
+    if(response) {
+      history.push("/scoring")
     }
   };
 
@@ -49,7 +70,7 @@ export default function DeclareWinnerScreen() {
             fontWeight: 700,
           }}
         >
-          Who won?
+          {TOP_TEXT}
         </div>
         <div style={{ display: "flex", justifyContent: "center" }}>
           <div
@@ -61,7 +82,7 @@ export default function DeclareWinnerScreen() {
               color: "white",
             }}
           >
-            declare a winner by clicking the star by the winners name
+            {BOTTOM_TEXT}
           </div>
         </div>
       </div>
@@ -75,11 +96,14 @@ export default function DeclareWinnerScreen() {
         }}
       >
         {gameData.map((player) => {
+          if (player.id === lastRoundWinner) {
+            return null;
+          }
           return (
-            <DeclareWinnerSegment
-              changeWinnerSelected={changeWinnerSelected}
-              winner={winnerSelected}
+            <DeclarePlayerPutdown
               player={player}
+              addPlayerSelected={addPlayerSelected}
+              removePlayerSelected={removePlayerSelected}
             />
           );
         })}
@@ -91,9 +115,9 @@ export default function DeclareWinnerScreen() {
           icon
           size="big"
           labelPosition="left"
-          onClick={confirmWinner}
+          onClick={confirmPlayerSelected}
         >
-          Confirm Winner
+          {BUTTON_TEXT}
           <Icon name="check" />
         </Button>
       </BottomContainer>
