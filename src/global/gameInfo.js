@@ -7,11 +7,9 @@ export const MAX_NAME_LENGTH = 12;
 
 export const MIN_PLAYERS = 2;
 
-export const MAX_PLAYERS = 12;
-
 export const PLAYER_COLORS = ["#EA2329", "#0970CB", "#F0C526", "#2A9941"];
 
-export const ROUND_STARTING = 9;
+export const ROUND_STARTING = 1;
 
 export const STARTING_POINTS = 0;
 
