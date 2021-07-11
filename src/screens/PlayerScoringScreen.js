@@ -9,15 +9,18 @@ import BottomContainer from "../components/BottomContainer";
 import { Button, Icon } from "semantic-ui-react";
 import { useHistory } from "react-router-dom";
 
+import { MIN_POINTS, MAX_POINTS } from "../global/gameInfo";
+
 export default function PlayerScoringScreen() {
   const { windowHeight, windowWidth } = useContext(WindowContext);
-  const { gameData, lastRoundWinner, confirmPlayerPoints } = useContext(GlobalGameContext);
+  const { gameData, lastRoundWinner, confirmPlayerPoints } =
+    useContext(GlobalGameContext);
 
-  let history = useHistory()
+  let history = useHistory();
 
   const [playerPoints, setPlayerPoints] = useState(
     gameData.map((a) => {
-      return { id: a.id, points: 0 };
+      return { id: a.id, points: MIN_POINTS };
     })
   );
 
@@ -34,12 +37,12 @@ export default function PlayerScoringScreen() {
   };
 
   const confirmPlayerPointsClick = async () => {
-    const res = await confirmPlayerPoints(playerPoints)
-    if(res) {
+    const res = await confirmPlayerPoints(playerPoints);
+    if (res) {
       // go to next page
-      history.push("/next")
+      history.push("/next");
     }
-  }
+  };
 
   return (
     <div
@@ -101,7 +104,14 @@ export default function PlayerScoringScreen() {
         })}
       </div>
       <BottomContainer size="small" alignCenter={true}>
-        <Button fluid positive icon size="big" labelPosition="left" onClick={confirmPlayerPointsClick}>
+        <Button
+          fluid
+          positive
+          icon
+          size="big"
+          labelPosition="left"
+          onClick={confirmPlayerPointsClick}
+        >
           Confirm Points
           <Icon name="check" />
         </Button>
