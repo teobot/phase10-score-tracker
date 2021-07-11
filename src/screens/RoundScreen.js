@@ -8,13 +8,11 @@ import { GlobalGameContext } from "../global/globalGameData";
 import BottomContainer from "../components/BottomContainer";
 import RoundScreenPlayerSegment from "../components/roundScreen/RoundScreenPlayerSegment";
 
-import ColorLuminance from "../functions/ColorLuminance";
-
 import { useHistory } from "react-router-dom";
 
 export default function RoundScreen() {
   const { windowWidth, windowHeight } = useContext(WindowContext);
-  const { gameData } = useContext(GlobalGameContext);
+  const { sortedGameData } = useContext(GlobalGameContext);
 
   let history = useHistory();
 
@@ -39,8 +37,10 @@ export default function RoundScreen() {
           padding: 5,
         }}
       >
-        {gameData.map((player) => {
-          return <RoundScreenPlayerSegment player={player}/>;
+        {sortedGameData().map((player, index) => {
+          return (
+            <RoundScreenPlayerSegment position={index + 1} player={player} />
+          );
         })}
       </div>
       <BottomContainer size="small" alignCenter={true}>
