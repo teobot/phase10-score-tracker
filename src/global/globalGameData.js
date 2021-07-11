@@ -6,6 +6,7 @@ import {
   MAX_NAME_LENGTH,
   PLAYER_COLORS,
   STARTING_POINTS,
+  MIN_PLAYERS,
 } from "./gameInfo";
 
 export const GlobalGameContext = createContext();
@@ -74,6 +75,7 @@ export default () => {
   const [roundNumber, setRound] = useState(ROUND_STARTING);
   const [lastRoundWinner, setLastRoundWinner] = useState(null);
   const [winnersArray, setWinnersArray] = useState([]);
+  const [roundSnapshots, setRoundSnapshots] = useState([]);
 
   const createPlayer = () => {
     // This method creates a player with a given name
@@ -130,22 +132,44 @@ export default () => {
     // : function needs to return true or false depending on if the round should start
 
     // Check if a player is on round 11
-    let winner = false
+    let winner = false;
     for (let i = 0; i < gameData.length; i++) {
       const player = gameData[i];
-      if(player.round === 11) {
+      if (player.round === 11) {
         console.log(player);
-        winner = true
+        winner = true;
       }
     }
 
+    // Save the last round information
+    setRoundSnapshots([
+      ...roundSnapshots,
+      ...[
+        {
+          round: roundNumber,
+          data: gameData,
+        },
+      ],
+    ]);
+
     // Check if the round should end
-    if(winner) {
+    if (winner) {
       // Game needs to end as there is a winner
+      console.log(roundSnapshots);
       return true;
     } else {
       // Game can continue
-      return false 
+      return false;
+    }
+  };
+
+  const checkPlayerLength = () => {
+    // This method checks the number of players
+    if (gameData.length >= MIN_PLAYERS) {
+      // Less players than what is allowed
+      return true;
+    } else {
+      return false;
     }
   };
 
@@ -162,9 +186,37 @@ export default () => {
       id: player_key,
       name: `Player${player_key}`,
       color: PLAYER_COLORS[colorKey],
-      points: STARTING_POINTS,
-      round: ROUND_STARTING,
+      points: STARTING_POINTS + Math.floor(Math.random() * 150),
+      round: ROUND_STARTING + Math.floor(Math.random() * 10),
     };
+  };
+
+  const sortedGameData = () => {
+    // This method sorts the gameData,
+    // The gameData is sorted by the round then by points
+    return gameData.sort(function (a, b) {
+      if (a.round !== b.round) {
+        // The rounds are not equal so sort by rounds
+        if (a.round > b.round) {
+          return -1;
+        }
+        if (a.round < b.round) {
+          return 1;
+        }
+        // a must be equal to b
+        return 0;
+      } else {
+        // Rounds are equal so sort by points
+        if (a.points > b.points) {
+          return 1;
+        }
+        if (a.points < b.points) {
+          return -1;
+        }
+        // a must be equal to b
+        return 0;
+      }
+    });
   };
 
   return [
@@ -179,6 +231,8 @@ export default () => {
       confirmPlayersPutdown,
       confirmPlayerPoints,
       shouldGameEnd,
+      checkPlayerLength,
+      sortedGameData,
     },
   ];
 };
