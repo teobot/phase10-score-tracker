@@ -12,7 +12,7 @@ import { useHistory } from "react-router-dom";
 
 export default function RoundScreen() {
   const { windowWidth, windowHeight } = useContext(WindowContext);
-  const { sortedGameData } = useContext(GlobalGameContext);
+  const { gameData } = useContext(GlobalGameContext);
 
   let history = useHistory();
 
@@ -37,7 +37,7 @@ export default function RoundScreen() {
           padding: 5,
         }}
       >
-        {sortedGameData().map((player, index) => {
+        {gameData.map((player, index) => {
           return (
             <RoundScreenPlayerSegment position={index + 1} player={player} />
           );
