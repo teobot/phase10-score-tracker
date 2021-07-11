@@ -186,8 +186,8 @@ export default () => {
       id: player_key,
       name: `Player${player_key}`,
       color: PLAYER_COLORS[colorKey],
-      points: STARTING_POINTS + Math.floor(Math.random() * 150),
-      round: ROUND_STARTING + Math.floor(Math.random() * 10),
+      points: STARTING_POINTS,
+      round: ROUND_STARTING,
     };
   };
 
