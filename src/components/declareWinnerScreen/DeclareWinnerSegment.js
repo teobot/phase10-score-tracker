@@ -4,7 +4,11 @@ import ColorLuminance from "../../functions/ColorLuminance";
 
 import { Icon } from "semantic-ui-react";
 
-export default function DeclareWinnerSegment({ player, changeWinnerSelected, winner }) {
+export default function DeclareWinnerSegment({
+  player,
+  changeWinnerSelected,
+  winner,
+}) {
   return (
     <div
       style={{
@@ -16,6 +20,9 @@ export default function DeclareWinnerSegment({ player, changeWinnerSelected, win
         display: "flex",
         boxShadow: "0px 4px 7px -1px #000000",
         WebkitBoxShadow: "0px 4px 7px -1px #000000",
+      }}
+      onClick={() => {
+        changeWinnerSelected(player.id);
       }}
     >
       <div
@@ -51,11 +58,14 @@ export default function DeclareWinnerSegment({ player, changeWinnerSelected, win
             justifyContent: "center",
             alignItems: "center",
           }}
-          onClick={() => {
-            changeWinnerSelected(player.id);
-          }}
         >
-          <Icon name="star" fitted inverted size="big" color={winner === player.id ? "yellow" : "white"} />
+          <Icon
+            name="star"
+            fitted
+            inverted
+            size="big"
+            color={winner === player.id ? "yellow" : "white"}
+          />
         </div>
       </div>
     </div>
