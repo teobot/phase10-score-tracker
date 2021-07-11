@@ -39,8 +39,8 @@ export default function EndWinnerScreen() {
         })}
       </div>
       <BottomContainer size="small" alignCenter={true}>
-        <Button fluid positive icon size="big" labelPosition="left">
-          Round End
+        <Button fluid primary icon size="big" labelPosition="left">
+          THE GAME HAS ENDED
           <Icon name="play" />
         </Button>
       </BottomContainer>
