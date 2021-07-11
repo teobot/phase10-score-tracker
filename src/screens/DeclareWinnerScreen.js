@@ -11,7 +11,7 @@ import { useHistory } from "react-router-dom";
 
 export default function DeclareWinnerScreen() {
   const { windowHeight, windowWidth } = useContext(WindowContext);
-  const { gameData, confirmRoundWinner } = useContext(GlobalGameContext);
+  const { sortedGameData, confirmRoundWinner } = useContext(GlobalGameContext);
   const [winnerSelected, setWinnerSelected] = useState(null);
 
   let history = useHistory();
@@ -74,7 +74,7 @@ export default function DeclareWinnerScreen() {
           overflowY: "auto",
         }}
       >
-        {gameData.map((player) => {
+        {sortedGameData().map((player) => {
           return (
             <DeclareWinnerSegment
               changeWinnerSelected={changeWinnerSelected}
