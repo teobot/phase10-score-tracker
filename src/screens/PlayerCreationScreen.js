@@ -20,12 +20,23 @@ import BottomContainer from "../components/BottomContainer";
 import CreatedPlayerContainer from "../components/playerCreationScreen/CreatedPlayerContainer";
 
 export default function PlayerCreationScreen() {
-  const { gameData, createPlayer } =
+  const { gameData, createPlayer, checkPlayerLength } =
     useContext(GlobalGameContext);
 
   const { windowWidth, windowHeight } = useContext(WindowContext);
 
-  let history = useHistory()
+  let history = useHistory();
+
+  const confirmPlayers = async () => {
+    // This function checks if the user has the correct number of players
+    const res = checkPlayerLength();
+    if (res) {
+      // Correct number of players
+      history.push("/next");
+    } else {
+      // Need more players
+    }
+  };
 
   return (
     <div
@@ -87,9 +98,7 @@ export default function PlayerCreationScreen() {
           icon
           size="big"
           labelPosition="left"
-          onClick={() => {
-            history.push("/next");
-          }}
+          onClick={confirmPlayers}
         >
           Start Game
           <Icon name="play" />
