@@ -221,7 +221,7 @@ export default () => {
 
   return [
     {
-      gameData,
+      gameData: sortedGameData(),
       createPlayer,
       removePlayer,
       changePlayerName,
