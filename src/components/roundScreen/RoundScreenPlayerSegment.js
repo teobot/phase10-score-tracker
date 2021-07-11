@@ -6,7 +6,7 @@ import { ROUND_RULES } from "../../global/gameInfo";
 
 import ScoreContainer from "./ScoreContainer";
 
-export default function RoundScreenPlayerSegment({ player }) {
+export default function RoundScreenPlayerSegment({ position, player }) {
   return (
     <div
       style={{
@@ -60,7 +60,7 @@ export default function RoundScreenPlayerSegment({ player }) {
         <ScoreContainer
           width={1}
           color={player.color}
-          value={0}
+          value={position}
           valueText="position"
         />
         <ScoreContainer
